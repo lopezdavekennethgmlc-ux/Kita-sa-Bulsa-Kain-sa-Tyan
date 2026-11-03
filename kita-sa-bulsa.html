@@ -1,0 +1,845 @@
+<title>Kita sa Bulsa, Kain sa Tyan</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=IBM+Plex+Mono:wght@500&family=Public+Sans:wght@400;600&display=swap">
+<style>
+/* Layout concept: a household ledger. Pocket (income) on one side, belly (food) on the other.
+   The hero is the thesis: one real statistic drawn to scale, then the campaign levels read like ledger entries. */
+:root{
+  --bg:#F3F4F1;
+  --surface:#FFFFFF;
+  --ink:#1D1A1C;
+  --muted:#5A5457;
+  --maroon:#8A1C2B;
+  --leaf:#2E6A50;
+  --line:#D8D9D3;
+  --tint:#F0E4E6;
+  --leaf-tint:#E0ECE5;
+  --on-accent:#FFFFFF;
+  --rice:#E8DCB8;
+  --coin:#E3A72F;
+  --font-display:"Bricolage Grotesque","Trebuchet MS",Arial,sans-serif;
+  --font-body:"Public Sans","Segoe UI",Arial,sans-serif;
+  --font-mono:"IBM Plex Mono",Consolas,"Courier New",monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#151214;--surface:#1F1A1D;--ink:#F1ECEE;--muted:#B5ABAF;--maroon:#E5808E;--leaf:#74C4A4;
+    --line:#3A3236;--tint:#2E1D21;--leaf-tint:#1B2A24;--on-accent:#1D1A1C;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#151214;--surface:#1F1A1D;--ink:#F1ECEE;--muted:#B5ABAF;--maroon:#E5808E;--leaf:#74C4A4;
+  --line:#3A3236;--tint:#2E1D21;--leaf-tint:#1B2A24;--on-accent:#1D1A1C;color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:76px}
+body{
+  background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:17px;line-height:1.6;
+  padding-block:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--surface)}
+h1,h2,h3{font-family:var(--font-display);line-height:1.1;margin:0;text-wrap:balance;letter-spacing:-0.01em}
+p{margin:0}
+a{color:var(--maroon)}
+:focus-visible{outline:3px solid var(--leaf);outline-offset:2px}
+.wrap{max-width:1040px;margin-inline:auto}
+.eyebrow{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--leaf);display:block;margin-bottom:10px}
+.lead{font-size:1.15rem;max-width:62ch}
+.muted{color:var(--muted)}
+.small{font-size:.9rem}
+
+/* header */
+.site{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line);
+  margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.site .wrap{display:flex;align-items:center;gap:20px;min-height:58px}
+.brand{font-family:var(--font-display);font-weight:800;font-size:1rem;white-space:nowrap;color:var(--maroon);text-decoration:none}
+.nav{display:flex;gap:4px;overflow-x:auto;min-width:0;scrollbar-width:thin}
+.nav a{font-size:.9rem;padding:8px 10px;color:var(--ink);text-decoration:none;white-space:nowrap;border-radius:6px}
+.nav a:hover{background:var(--tint)}
+
+/* hero */
+.hero{padding-block:56px 40px}
+.hero h1{font-size:clamp(2.6rem,8vw,5.2rem);font-weight:800;color:var(--maroon);max-width:14ch}
+.hero .sub{font-family:var(--font-display);font-size:clamp(1.15rem,2.6vw,1.6rem);font-weight:500;margin-top:18px;max-width:30ch}
+.goal{margin-top:28px;border-left:4px solid var(--leaf);padding:4px 0 4px 18px;max-width:60ch}
+.goal b{font-family:var(--font-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--leaf);display:block;margin-bottom:6px;font-weight:500}
+.btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.btn{display:inline-block;font:600 1rem var(--font-body);padding:12px 20px;border-radius:8px;text-decoration:none;border:2px solid var(--maroon);cursor:pointer}
+.btn-fill{background:var(--maroon);color:var(--on-accent)}
+.btn-line{background:transparent;color:var(--maroon)}
+.btn:hover{filter:brightness(1.08)}
+
+/* ledger bar */
+.ledger{margin-top:44px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:24px}
+.ledger h2{font-size:1.25rem;margin-bottom:4px}
+.bar{display:flex;height:56px;margin:20px 0 14px;border-radius:6px;overflow:hidden;border:1px solid var(--line)}
+.bar span{display:block;height:100%}
+.seg-a{width:55.5%;background:var(--leaf)}
+.seg-b{width:39.8%;background:var(--maroon)}
+.seg-c{width:4.7%;background:repeating-linear-gradient(45deg,var(--ink) 0 3px,var(--surface) 3px 6px)}
+.key{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:12px;list-style:none;margin:0;padding:0}
+.key li{display:flex;flex-direction:column;gap:2px}
+.key .num{font-family:var(--font-display);font-weight:800;font-size:1.8rem;line-height:1}
+.key .chip{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:baseline}
+
+/* sections */
+section.block{padding-block:56px;border-top:1px solid var(--line)}
+section.block>.wrap>h2{font-size:clamp(1.8rem,4.5vw,2.7rem);margin-bottom:14px}
+.grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));margin-top:28px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:22px;min-width:0}
+.card h3{font-size:1.25rem;margin-bottom:8px}
+.card p+p{margin-top:10px}
+.tag{font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--maroon);display:block;margin-bottom:8px}
+.cite{font-size:.85rem;color:var(--muted)}
+.callout{background:var(--tint);border-radius:10px;padding:18px 20px;margin-top:24px;max-width:70ch}
+
+/* levels */
+.level{display:grid;grid-template-columns:minmax(0,200px) minmax(0,1fr);gap:28px;padding-block:32px;border-top:1px solid var(--line)}
+.level:first-of-type{border-top:0}
+.level .where h3{font-size:1.6rem;color:var(--maroon)}
+.level .where p{color:var(--muted);font-size:.95rem;margin-top:6px}
+.acts{display:grid;gap:14px;list-style:none;margin:0;padding:0}
+.acts li{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.acts b{display:block;font-family:var(--font-display);font-size:1.05rem;margin-bottom:4px}
+@media (max-width:720px){.level{grid-template-columns:minmax(0,1fr);gap:12px}}
+
+/* connect */
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:0;margin-top:28px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.flow>div{padding:20px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);margin:0 -1px -1px 0;min-width:0}
+.flow h3{font-size:1.1rem;margin-bottom:6px}
+
+/* timeline */
+.phases{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));margin-top:28px;counter-reset:ph}
+.phase{background:var(--surface);border:1px solid var(--line);border-top:6px solid var(--leaf);border-radius:10px;padding:20px;min-width:0}
+.phase .when{font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--leaf);display:block;margin-bottom:6px}
+.phase h3{font-size:1.25rem;margin-bottom:8px}
+.phase ul,.plain{margin:0;padding-left:1.1rem}
+.phase li+li,.plain li+li{margin-top:6px}
+.tablewrap{overflow-x:auto;margin-top:28px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:520px}
+th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:500}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600;white-space:nowrap}
+
+/* checklist */
+.check{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:8px}
+.check label{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:8px;cursor:pointer;background:var(--bg)}
+.check input{width:20px;height:20px;margin-top:2px;accent-color:var(--leaf);flex:none}
+.score{font-family:var(--font-display);font-weight:800;font-size:1.4rem;color:var(--leaf);margin-top:14px}
+
+/* pledge */
+.pledge{display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));margin-top:28px}
+fieldset{border:0;padding:0;margin:0 0 16px;min-width:0}
+legend{font-weight:600;margin-bottom:8px;padding:0}
+select,textarea{width:100%;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+textarea{min-height:190px;resize:vertical}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:6px 0}
+.opt input{width:18px;height:18px;margin-top:4px;accent-color:var(--maroon);flex:none}
+.status{min-height:1.4em;margin-top:8px;font-size:.9rem;color:var(--leaf)}
+
+/* team and refs */
+.team{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));list-style:none;margin:24px 0 0;padding:0}
+.team li{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.refs{list-style:none;margin:24px 0 0;padding:0;display:grid;gap:14px;max-width:80ch}
+.refs li{padding-left:2rem;text-indent:-2rem;overflow-wrap:anywhere;font-size:.95rem}
+footer{padding-block:36px 48px;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem}
+/* ---------- motion layer ---------- */
+.hero{position:relative;isolation:isolate}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:32px;align-items:center}
+@media (max-width:860px){.hero-grid{grid-template-columns:minmax(0,1fr)}}
+.hero-text{min-width:0}
+.hero h1{font-size:clamp(2.4rem,6.5vw,4.2rem)}
+.hero h1 .w{display:inline-block;animation:rise .9s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:calc(var(--i) * .12s)}
+.hero .sub,.hero .goal,.hero .btns{animation:rise .9s .7s cubic-bezier(.2,.8,.2,1) backwards}
+@keyframes rise{from{opacity:0;transform:translateY(.6em) rotate(2deg)}to{opacity:1;transform:none}}
+
+.drift{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:-1}
+.drift i{position:absolute;left:var(--x);bottom:-40px;width:var(--s);height:var(--s);border-radius:50%;background:var(--coin);opacity:.2;animation:drift var(--d) linear infinite;animation-delay:var(--l)}
+@keyframes drift{from{transform:translateY(0) rotate(0)}to{transform:translateY(-1000px) rotate(360deg)}}
+
+.scene-wrap{margin:0;min-width:0}
+.scene{width:100%;height:auto;max-width:460px;display:block;margin-inline:auto;overflow:visible}
+.scene text{font-family:var(--font-mono);font-size:12px;fill:var(--ink);text-anchor:middle;letter-spacing:.08em}
+.scene .pouch-t{font:800 34px var(--font-display);fill:var(--on-accent);letter-spacing:0}
+.table{fill:var(--tint);stroke:var(--line);stroke-width:2}
+.ring{fill:none;stroke:var(--maroon);stroke-opacity:.35;stroke-dasharray:3 9;stroke-width:2;transform-box:fill-box;transform-origin:center;animation:spin 60s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.plate-o{fill:var(--surface);stroke:var(--line);stroke-width:3}
+.plate-i{fill:var(--bg);stroke:var(--line);stroke-width:2}
+.rice{fill:var(--rice)}
+.veg{fill:var(--leaf)}
+.fish{fill:var(--maroon)}
+.coin{fill:var(--coin);stroke:var(--maroon);stroke-width:1.5}
+.pouch-c{fill:var(--maroon)}
+.pouch{transform-box:fill-box;transform-origin:center;animation:beat 2.4s ease-in-out infinite}
+@keyframes beat{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.food{transform-box:fill-box;transform-origin:center;transition:transform 1s cubic-bezier(.3,1.5,.5,1)}
+.scene[data-state="today"] .nanay .food{transform:scale(.32)}
+.steam{fill:none;stroke:var(--muted);stroke-width:2;stroke-linecap:round;opacity:0;animation:steam 3s ease-in-out infinite}
+.steam.s2{animation-delay:1.1s}
+@keyframes steam{0%{opacity:0;transform:translateY(5px)}40%{opacity:.55}100%{opacity:0;transform:translateY(-10px)}}
+.scene[data-state="today"] .nanay .steam{display:none}
+.toggle{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.toggle button{font:600 .9rem var(--font-body);padding:9px 16px;border-radius:999px;border:2px solid var(--maroon);background:transparent;color:var(--maroon);cursor:pointer}
+.toggle button[aria-pressed="true"]{background:var(--maroon);color:var(--on-accent)}
+.scene-cap{text-align:center;font-size:.92rem;color:var(--muted);margin:10px auto 0;min-height:4.2em;max-width:44ch}
+
+.marquee{margin-top:36px;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.track{display:flex;width:max-content;animation:scroll 70s linear infinite}
+.marquee:hover .track{animation-play-state:paused}
+.track ul{display:flex;list-style:none;margin:0;padding:0}
+.track li{position:relative;padding:14px 30px;white-space:nowrap;font-size:.95rem}
+.track li::after{content:"";position:absolute;right:-3px;top:calc(50% - 3px);width:6px;height:6px;background:var(--maroon);transform:rotate(45deg)}
+@keyframes scroll{to{transform:translateX(-50%)}}
+
+.progress{position:absolute;left:0;bottom:-1px;height:3px;width:100%;background:var(--maroon);transform:scaleX(0);transform-origin:left}
+.bar{animation:wipe 1.6s .5s cubic-bezier(.3,.7,.2,1) backwards}
+@keyframes wipe{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+
+.reveal.in{animation:reveal .8s cubic-bezier(.2,.8,.2,1) backwards}
+@keyframes reveal{from{opacity:.25;transform:translateY(32px)}to{opacity:1;transform:none}}
+.card,.acts li,.phase{transition:transform .25s ease,box-shadow .25s ease}
+.card:hover,.acts li:hover,.phase:hover{transform:translateY(-4px);box-shadow:0 12px 26px rgba(0,0,0,.14)}
+
+.stats{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));margin-top:28px}
+.stat{border-top:3px solid var(--maroon);padding-top:10px;min-width:0}
+.stat .big{font-family:var(--font-display);font-weight:800;font-size:clamp(2.3rem,6vw,3.4rem);line-height:1;color:var(--maroon);font-variant-numeric:tabular-nums}
+
+.connect{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:28px;align-items:center;margin-top:28px}
+@media (max-width:760px){.connect{grid-template-columns:minmax(0,1fr)}}
+.connect .flow{margin-top:0;grid-template-columns:minmax(0,1fr)}
+.rings{margin:0;min-width:0}
+.rings svg{width:100%;height:auto;max-width:360px;display:block;margin-inline:auto}
+.rings text{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;text-anchor:middle;fill:var(--ink)}
+.rings .on{fill:var(--on-accent)}
+.r-g{fill:var(--leaf-tint);stroke:var(--leaf);stroke-opacity:.6;stroke-width:2}
+.r-n{fill:var(--tint);stroke:var(--maroon);stroke-opacity:.5;stroke-width:2}
+.r-l{fill:var(--maroon)}
+.dot-g{fill:var(--leaf)}
+.dot-m{fill:var(--maroon)}
+.pulse{fill:none;stroke:var(--maroon);stroke-width:2;transform-box:fill-box;transform-origin:center;animation:pulse 3.2s ease-out infinite}
+.pulse.p2{animation-delay:1.6s}
+@keyframes pulse{from{transform:scale(1);opacity:.7}to{transform:scale(2.5);opacity:0}}
+.rings figcaption{text-align:center;font-size:.9rem;color:var(--muted);margin-top:8px}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .reveal.in,.hero h1 .w,.hero .sub,.hero .goal,.hero .btns,.bar,.pouch,.steam,.pulse,.ring,.drift i,.track{animation:none!important}
+  .drift{display:none}
+  .food,.card,.acts li,.phase{transition:none}
+  .track{width:auto}
+  .track ul{flex-wrap:wrap}
+  .track ul+ul{display:none}
+}
+</style>
+
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="#top">Kita sa Bulsa</a>
+    <nav class="nav" aria-label="Campaign sections">
+      <a href="#issue">The issue</a>
+      <a href="#levels">Three levels</a>
+      <a href="#working">What works</a>
+      <a href="#plan">Plan</a>
+      <a href="#lasting">Sustainability</a>
+      <a href="#act">Take action</a>
+      <a href="#team">Team</a>
+      <a href="#refs">References</a>
+    </nav>
+  </div>
+  <div class="progress" id="progress" aria-hidden="true"></div>
+</header>
+
+<main id="top">
+<div class="wrap">
+  <section class="hero" aria-labelledby="h-title">
+    <div class="drift" aria-hidden="true">
+      <i style="--s:22px;--x:6%;--d:19s;--l:-2s"></i>
+      <i style="--s:14px;--x:22%;--d:23s;--l:-9s"></i>
+      <i style="--s:30px;--x:41%;--d:27s;--l:-14s"></i>
+      <i style="--s:16px;--x:58%;--d:21s;--l:-6s"></i>
+      <i style="--s:26px;--x:73%;--d:25s;--l:-17s"></i>
+      <i style="--s:12px;--x:86%;--d:18s;--l:-11s"></i>
+      <i style="--s:20px;--x:94%;--d:29s;--l:-4s"></i>
+    </div>
+    <div class="hero-grid">
+    <div class="hero-text">
+    <span class="eyebrow">Youth advocacy campaign &middot; Social justice &middot; Philippines</span>
+    <h1 id="h-title" aria-label="Kita sa Bulsa, Kain sa Tyan"><span class="w" style="--i:0" aria-hidden="true">Kita</span> <span class="w" style="--i:1" aria-hidden="true">sa</span> <span class="w" style="--i:2" aria-hidden="true">Bulsa,</span> <span class="w" style="--i:3" aria-hidden="true">Kain</span> <span class="w" style="--i:4" aria-hidden="true">sa</span> <span class="w" style="--i:5" aria-hidden="true">Tyan</span></h1>
+    <p class="sub">Gender inequality in access to food and control over household income.</p>
+    <div class="goal">
+      <b>Campaign goal</b>
+      <p>To reduce gender inequality in hunger by promoting fair access to food, shared household financial decisions, and women's economic empowerment, from the barangay to the world.</p>
+    </div>
+    <div class="btns">
+      <a class="btn btn-fill" href="#act">Take action</a>
+      <a class="btn btn-line" href="#levels">See the solutions</a>
+    </div>
+    </div>
+
+    <figure class="scene-wrap">
+      <svg class="scene" id="scene" data-state="today" viewBox="0 0 420 420" role="img" aria-label="Animated dinner table seen from above. Coins flow from a household pouch to four plates. In many homes the mother's plate is nearly empty, and in a fair household every plate is full.">
+        <circle class="table" cx="210" cy="210" r="198"/>
+        <circle class="ring" cx="210" cy="210" r="178"/>
+        <g transform="translate(210 90)">
+          <circle class="plate-o" r="46"/><circle class="plate-i" r="34"/>
+          <g class="food"><circle class="rice" r="22"/><circle class="veg" cx="-9" cy="7" r="8"/><circle class="fish" cx="10" cy="-8" r="7"/></g>
+          <path class="steam" d="M-4 -30 q5 -6 0 -12 q-5 -6 0 -12"/><path class="steam s2" d="M6 -30 q5 -6 0 -12 q-5 -6 0 -12"/>
+        </g>
+        <g transform="translate(330 210)">
+          <circle class="plate-o" r="46"/><circle class="plate-i" r="34"/>
+          <g class="food"><circle class="rice" r="22"/><circle class="veg" cx="-9" cy="7" r="8"/><circle class="fish" cx="10" cy="-8" r="7"/></g>
+          <path class="steam" d="M-4 -30 q5 -6 0 -12 q-5 -6 0 -12"/><path class="steam s2" d="M6 -30 q5 -6 0 -12 q-5 -6 0 -12"/>
+        </g>
+        <g class="nanay" transform="translate(210 330)">
+          <circle class="plate-o" r="46"/><circle class="plate-i" r="34"/>
+          <g class="food"><circle class="rice" r="22"/><circle class="veg" cx="-9" cy="7" r="8"/><circle class="fish" cx="10" cy="-8" r="7"/></g>
+          <path class="steam" d="M-4 -30 q5 -6 0 -12 q-5 -6 0 -12"/><path class="steam s2" d="M6 -30 q5 -6 0 -12 q-5 -6 0 -12"/>
+        </g>
+        <g transform="translate(90 210)">
+          <circle class="plate-o" r="46"/><circle class="plate-i" r="34"/>
+          <g class="food"><circle class="rice" r="22"/><circle class="veg" cx="-9" cy="7" r="8"/><circle class="fish" cx="10" cy="-8" r="7"/></g>
+          <path class="steam" d="M-4 -30 q5 -6 0 -12 q-5 -6 0 -12"/><path class="steam s2" d="M6 -30 q5 -6 0 -12 q-5 -6 0 -12"/>
+        </g>
+        <g id="coins"></g>
+        <g class="pouch"><circle class="pouch-c" cx="210" cy="210" r="36"/><text class="pouch-t" x="210" y="222">&#8369;</text></g>
+        <text x="210" y="32">TATAY</text>
+        <text x="330" y="274">ANAK</text>
+        <text x="210" y="398">NANAY</text>
+        <text x="90" y="274">ANAK</text>
+      </svg>
+      <div class="toggle" role="group" aria-label="Choose a scene">
+        <button type="button" data-state="today" aria-pressed="true">Many homes today</button>
+        <button type="button" data-state="fair" aria-pressed="false">Fair plate, fair pay</button>
+      </div>
+      <figcaption class="scene-cap" id="scene-cap" aria-live="polite">Money comes in, but the mother may eat less so everyone else can eat. Women often put other household members first during shortages (FAO, 2025; Gregorio, 2024).</figcaption>
+    </figure>
+    </div>
+
+    <div class="marquee" aria-label="Key facts">
+      <div class="track">
+        <ul>
+          <li>Food insecurity is more common among adult women than men in every region (FAO, 2025)</li>
+          <li>About 792,000 people in 137 countries, and the gap still shows (Mane et al., 2025)</li>
+          <li>55.5% of married Filipino women share control of their earnings with their husbands (PSA, 2023)</li>
+          <li>Magna Carta of Women, Section 20: food security and productive resources</li>
+          <li>SDG 2 Zero Hunger and SDG 5 Gender Equality</li>
+        </ul>
+        <ul aria-hidden="true">
+          <li>Food insecurity is more common among adult women than men in every region (FAO, 2025)</li>
+          <li>About 792,000 people in 137 countries, and the gap still shows (Mane et al., 2025)</li>
+          <li>55.5% of married Filipino women share control of their earnings with their husbands (PSA, 2023)</li>
+          <li>Magna Carta of Women, Section 20: food security and productive resources</li>
+          <li>SDG 2 Zero Hunger and SDG 5 Gender Equality</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ledger">
+      <h2>Who controls a married Filipino woman's cash earnings?</h2>
+      <p class="muted small">Currently married women aged 15 to 49, 2022 (Philippine Statistics Authority, 2023). Bar drawn to scale.</p>
+      <div class="bar" role="img" aria-label="55.5 percent both spouses, 39.8 percent the woman herself, 4.7 percent the husband">
+        <span class="seg-a"></span><span class="seg-b"></span><span class="seg-c"></span>
+      </div>
+      <ul class="key">
+        <li><span class="num">55.5%</span><span><i class="chip" style="background:var(--leaf)"></i>Both spouses control it</span></li>
+        <li><span class="num">39.8%</span><span><i class="chip" style="background:var(--maroon)"></i>She controls it herself</span></li>
+        <li><span class="num">4.7%</span><span><i class="chip" style="background:repeating-linear-gradient(45deg,var(--ink) 0 2px,var(--surface) 2px 4px)"></i>Her husband controls it</span></li>
+      </ul>
+      <p class="small muted" style="margin-top:16px">Control over income differs from home to home. So this campaign asks four questions: who earns, who decides how it is spent, who buys the food, and who goes without when money runs short.</p>
+    </div>
+  </section>
+</div>
+
+<section class="block" id="issue" aria-labelledby="h-issue">
+  <div class="wrap">
+    <span class="eyebrow">The inequality</span>
+    <h2 id="h-issue">Hunger is not only about whether food exists</h2>
+    <p class="lead">Gender inequality in hunger means people in the same household do not always have the same access to enough, nutritious food. Gender norms shape who earns income, who manages it, and who decides about food (FAO, 2025). Food insecurity should be examined by asking who has access to and control over the resources needed to get food, and not only who goes hungry.</p>
+    <div class="callout"><b>What this does not mean.</b> Men are not always less hungry than women. The point is that being the person who earns and handles money can give more immediate access to food.</div>
+
+    <div class="stats">
+      <div class="stat"><div class="big"><span class="count" data-to="137">137</span></div><p class="small muted">countries in the 2025 global study (Mane et al.)</p></div>
+      <div class="stat"><div class="big"><span class="count" data-to="792000">792,000</span></div><p class="small muted">people surveyed between 2014 and 2022</p></div>
+      <div class="stat"><div class="big">Every</div><p class="small muted">world region where adult women are more food insecure than men (FAO, 2025)</p></div>
+    </div>
+
+    <div class="grid">
+      <article class="card">
+        <span class="tag">Local, in the barangay</span>
+        <h3>The one who holds the money</h3>
+        <p>Picture a family where the father drives a tricycle or jeepney, or works in construction. During his shift he handles his own earnings and can buy food when he is hungry. His wife and children at home depend on the money or food he brings back after work.</p>
+        <p class="cite">Illustration developed by the group; control of earnings varies by household (PSA, 2023).</p>
+      </article>
+      <article class="card">
+        <span class="tag">National, Philippines</span>
+        <h3>Mothers as the buffer</h3>
+        <p>Among urban poor households in Metro Manila, mothers often put the food needs of their children and other family members first, while also helping earn income. Earning money does not automatically mean equal food security. Women may adjust their own consumption to protect everyone else's.</p>
+        <p class="cite">Gregorio (2024)</p>
+      </article>
+      <article class="card">
+        <span class="tag">Global</span>
+        <h3>The gap appears in every region</h3>
+        <p>Food insecurity is more common among adult women than men in every region of the world. A study of about 792,000 people in 137 countries (2014 to 2022) found women were more likely to be food insecure even after accounting for income, employment and education.</p>
+        <p>Research in South Asia also found that how food is shared among adults depends on income, social status and household circumstances, and the inequality shows most under severe shortage.</p>
+        <p class="cite">FAO (2025); Mane et al. (2025); Harris-Fry et al. (2017)</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="levels" aria-labelledby="h-levels">
+  <div class="wrap">
+    <span class="eyebrow">Solutions at three levels</span>
+    <h2 id="h-levels">From the barangay hall to the United Nations</h2>
+    <p class="lead">Each level fixes a different part of the problem, and each depends on the others. Food aid alone does not change who decides. Law alone does not reach the kitchen table.</p>
+
+    <div class="level">
+      <div class="where">
+        <h3>Local</h3>
+        <p>Barangays, health centers, LGUs and community groups.</p>
+      </div>
+      <ul class="acts">
+        <li><b>Livelihood and money skills for women</b>LGUs and Barangay Gender and Development (GAD) programs run skill-building, livelihood, financial literacy and money management sessions for stay-at-home mothers and women from low-income households.</li>
+        <li><b>Nutrition support that counts mothers too</b>Barangay health centers strengthen food assistance, supplementary feeding and nutrition education for mothers and children, recognizing that some mothers eat less so their children can eat.</li>
+        <li><b>Community feeding that reaches the right homes</b>Barangays prioritize households with pregnant women, single mothers, female-headed households and limited income, working with health centers, nutrition scholars and community groups.</li>
+      </ul>
+    </div>
+
+    <div class="level">
+      <div class="where">
+        <h3>National</h3>
+        <p>Congress, agencies and LGUs under Philippine law.</p>
+      </div>
+      <ul class="acts">
+        <li><b>Enforce the Magna Carta of Women</b>Strengthen implementation of Republic Act No. 9710, especially Section 20 on food security and productive resources, which covers access to safe, nutritious food, training and economic opportunities for marginalized women, pregnant and lactating mothers and their children.</li>
+        <li><b>Gender-responsive food assistance</b>Encourage LGUs to identify food-insecure households and plan for the specific needs of women, including those who skip meals for their families.</li>
+        <li><b>Family resource workshops</b>Community workshops on fair food distribution, budgeting and shared financial decisions.</li>
+        <li><b>Measure who is reached</b>Agencies and LGUs collect sex-disaggregated data on food insecurity and check whether assistance reaches vulnerable people, as the Magna Carta's gender-responsive planning and monitoring provisions call for.</li>
+      </ul>
+    </div>
+
+    <div class="level">
+      <div class="where">
+        <h3>Global</h3>
+        <p>UN Sustainable Development Goals and international partners.</p>
+      </div>
+      <ul class="acts">
+        <li><b>SDG 2: Zero Hunger</b>Target 2.1 aims to end hunger and give everyone, especially people in poverty and vulnerable situations, access to safe, nutritious and sufficient food all year.</li>
+        <li><b>SDG 5: Gender Equality</b>Target 5.4 recognizes unpaid care and domestic work. Target 5.a promotes women's equal rights to economic resources and to ownership and control over property and financial resources.</li>
+        <li><b>Put the goals into barangay practice</b>Quarterly assessments of food-insecure households, livelihood training and shared household decision-making, and evaluation every six months that tracks households assisted, changes in food insecurity, skipped meals and how resources are allocated.</li>
+        <li><b>What international partners add</b>Bodies such as the FAO and UN agencies can support comparable data, shared lessons and funding so that local programs are judged against the same goals everywhere.</li>
+      </ul>
+    </div>
+
+    <h3 style="font-size:1.5rem;margin-top:36px">How the three levels work together</h3>
+    <div class="connect">
+    <figure class="rings">
+      <svg viewBox="0 0 360 360" role="img" aria-label="Three nested rings: local inside national inside global, with pulses and dots moving between them.">
+        <circle class="r-g" cx="180" cy="180" r="165"/>
+        <circle class="r-n" cx="180" cy="180" r="115"/>
+        <circle class="pulse" cx="180" cy="180" r="40"/>
+        <circle class="pulse p2" cx="180" cy="180" r="40"/>
+        <circle class="r-l" cx="180" cy="180" r="62"/>
+        <text x="180" y="46">GLOBAL &middot; SDGs</text>
+        <text x="180" y="98">NATIONAL &middot; RA 9710</text>
+        <text class="on" x="180" y="178">LOCAL</text>
+        <text class="on" x="180" y="194">BARANGAY</text>
+        <circle class="dot-g" r="6">
+          <animateMotion dur="14s" repeatCount="indefinite" path="M180 15 A165 165 0 0 1 180 345 A165 165 0 0 1 180 15"/>
+        </circle>
+        <circle class="dot-m" r="6">
+          <animateMotion dur="9s" repeatCount="indefinite" path="M180 65 A115 115 0 0 0 180 295 A115 115 0 0 0 180 65"/>
+        </circle>
+      </svg>
+      <figcaption>Data flows up. Support flows down.</figcaption>
+    </figure>
+    <div class="flow">
+      <div><h3>Local gathers the facts</h3><p class="small">Quarterly barangay assessments show which homes lack food and who skips meals.</p></div>
+      <div><h3>National turns facts into policy</h3><p class="small">Sex-disaggregated data tells agencies whether the Magna Carta's food and resource provisions are working.</p></div>
+      <div><h3>Global sets the standard</h3><p class="small">SDG 2 and SDG 5 give shared targets, comparison and support for the national effort.</p></div>
+      <div><h3>Support flows back down</h3><p class="small">Stronger policy and shared goals back barangay programs with resources and legitimacy.</p></div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="working" aria-labelledby="h-working">
+  <div class="wrap">
+    <span class="eyebrow">Evidence from real programs</span>
+    <h2 id="h-working">Cash helps. Shared decisions finish the job.</h2>
+    <p class="lead">Two large cash transfer programs, one in the Philippines and one in Brazil, show what helps and what is still missing.</p>
+    <div class="grid">
+      <article class="card">
+        <span class="tag">Philippines</span>
+        <h3>Pantawid Pamilya (4Ps)</h3>
+        <p>The government's flagship program gives cash to poor households on condition that they invest in their children's health and schooling. The third impact evaluation found positive effects on household welfare, including income and food security.</p>
+        <p>A study of 4Ps households in Calauan and San Pablo City, Laguna, found that transfers involving women had modest effects on their time, while household gender relations largely stayed the same.</p>
+        <p class="cite">Orbeta et al. (2021); Alinsunurin (2018)</p>
+      </article>
+      <article class="card">
+        <span class="tag">Brazil</span>
+        <h3>Bolsa Família</h3>
+        <p>Payments go preferentially to the female head of household. Researchers at IFPRI asked whether women's control of the money gives them more say in decisions. They found it could be a pathway to empowerment, particularly for women in urban areas, but no significant increase in decision-making power for rural women.</p>
+        <p class="cite">de Brauw et al. (2014); IFPRI summary</p>
+      </article>
+      <article class="card" style="background:var(--leaf-tint)">
+        <span class="tag" style="color:var(--leaf)">The lesson for this campaign</span>
+        <h3>Pair money with voice</h3>
+        <p>Income support raises food security, but it does not by itself change who decides or who eats less. That is why the campaign pairs food assistance with financial literacy, shared budgeting and gender-responsive monitoring, and adapts them to each community.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="plan" aria-labelledby="h-plan">
+  <div class="wrap">
+    <span class="eyebrow">Implementation plan</span>
+    <h2 id="h-plan">A twelve-month plan that starts in one barangay</h2>
+    <div class="phases">
+      <article class="phase">
+        <span class="when">Months 1 to 3</span>
+        <h3>Listen and raise awareness</h3>
+        <ul>
+          <li>School and barangay talks using this campaign's facts</li>
+          <li>Social media posts and short videos under #KitaSaBulsaKainSaTyan</li>
+          <li>A simple baseline survey: who earns, who decides, who buys food, who skips meals</li>
+          <li>Partner meetings with the barangay GAD focal person and health center</li>
+        </ul>
+      </article>
+      <article class="phase">
+        <span class="when">Months 4 to 9</span>
+        <h3>Run the pilot</h3>
+        <ul>
+          <li>Financial literacy and livelihood workshops for mothers and women from low-income homes</li>
+          <li>Feeding and nutrition education prioritizing the most food-insecure households</li>
+          <li>Quarterly assessments of food-insecure households to direct assistance</li>
+          <li>Family resource management sessions on fair food sharing and budgeting</li>
+        </ul>
+      </article>
+      <article class="phase">
+        <span class="when">Month 10 onward</span>
+        <h3>Evaluate and expand</h3>
+        <ul>
+          <li>Review every six months: households assisted, change in food insecurity, skipped meals, use of resources</li>
+          <li>Report sex-disaggregated results to the barangay and the LGU</li>
+          <li>Adjust programs, then share the model with neighboring barangays</li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Who</th><th>What they do</th></tr></thead>
+        <tbody>
+          <tr><td>Individuals and families</td><td>Talk openly about money and meals at home, share fair budgeting practices, join community activities.</td></tr>
+          <tr><td>Schools and youth groups</td><td>Run awareness drives, help with surveys and communications, volunteer at feeding activities.</td></tr>
+          <tr><td>Barangays and LGUs</td><td>Run GAD workshops, feeding programs and quarterly household assessments, and review results every six months.</td></tr>
+          <tr><td>Health centers</td><td>Deliver nutrition education and supplementary feeding for mothers and children.</td></tr>
+          <tr><td>NGOs and community groups</td><td>Train facilitators, support families, and document what works.</td></tr>
+          <tr><td>National government</td><td>Enforce the Magna Carta of Women, fund gender-responsive food assistance, require sex-disaggregated data.</td></tr>
+          <tr><td>International organizations</td><td>Support comparable data and shared learning through SDG 2 and SDG 5.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="lasting" aria-labelledby="h-lasting">
+  <div class="wrap">
+    <span class="eyebrow">Sustainability and innovation</span>
+    <h2 id="h-lasting">Built to keep going after the campaign ends</h2>
+    <div class="grid">
+      <article class="card">
+        <h3>Why it lasts</h3>
+        <ul class="plain">
+          <li>It uses structures that already exist: barangay GAD programs, health centers and the Magna Carta of Women.</li>
+          <li>Local women and community members are trained to lead the workshops, so the skills stay in the barangay.</li>
+          <li>Every six months the numbers are reviewed, so weak parts are fixed instead of repeated.</li>
+          <li>Partnerships across households, schools, LGUs, NGOs and agencies share the work and the cost.</li>
+        </ul>
+      </article>
+      <article class="card">
+        <h3>What is new about it</h3>
+        <ul class="plain">
+          <li><b>Counts sacrifice, not just supply.</b> Evaluations track skipped meals alongside food availability.</li>
+          <li><b>Looks inside the household.</b> It treats control of income and unpaid work as part of hunger.</li>
+          <li><b>Youth-made media.</b> Short videos and infographics in Filipino and English.</li>
+          <li><b>A tool for the kitchen table.</b> The Fair Plate, Fair Pay checklist, next to this card.</li>
+        </ul>
+      </article>
+      <article class="card" id="check">
+        <span class="tag">Try it: Fair Plate, Fair Pay</span>
+        <h3>A talk starter for your household</h3>
+        <p class="small muted">Not a test. Tick what is already true at home and talk about the rest.</p>
+        <ul class="check" id="checklist">
+          <li><label><input type="checkbox"> We talk about who earns money and how much comes in.</label></li>
+          <li><label><input type="checkbox"> Big spending decisions, including food, are made together.</label></li>
+          <li><label><input type="checkbox"> Everyone's meals are counted in the food budget, including the person who cooks.</label></li>
+          <li><label><input type="checkbox"> Nobody regularly skips meals so others can eat.</label></li>
+          <li><label><input type="checkbox"> Housework and care for family count as real work.</label></li>
+          <li><label><input type="checkbox"> We know which barangay food, health and livelihood programs we can ask about.</label></li>
+        </ul>
+        <p class="score" id="score" aria-live="polite">0 of 6 in place</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="act" aria-labelledby="h-act">
+  <div class="wrap">
+    <span class="eyebrow">Call to action</span>
+    <h2 id="h-act">Nobody should skip a meal because of who they are</h2>
+    <p class="lead">Every family member deserves enough food and a fair say in how household money is used. Pick what you will do this week, build your pledge, and post it.</p>
+    <div class="pledge">
+      <form class="card" id="pledge-form">
+        <fieldset>
+          <legend><label for="role">I am a</label></legend>
+          <select id="role">
+            <option>student</option>
+            <option>parent or guardian</option>
+            <option>teacher</option>
+            <option>barangay or LGU official</option>
+            <option>NGO or community partner</option>
+            <option>concerned citizen</option>
+          </select>
+        </fieldset>
+        <fieldset>
+          <legend>This week I will</legend>
+          <label class="opt"><input type="checkbox" name="act" value="start a Fair Plate, Fair Pay talk at home" checked> Start a Fair Plate, Fair Pay talk at home</label>
+          <label class="opt"><input type="checkbox" name="act" value="share one fact from this campaign with five people"> Share one fact from this campaign with five people</label>
+          <label class="opt"><input type="checkbox" name="act" value="ask my barangay about its GAD livelihood and feeding programs"> Ask my barangay about its GAD livelihood and feeding programs</label>
+          <label class="opt"><input type="checkbox" name="act" value="volunteer or donate to a community feeding activity"> Volunteer or donate to a community feeding activity</label>
+        </fieldset>
+        <button class="btn btn-fill" type="submit">Build my pledge</button>
+      </form>
+      <div class="card">
+        <label for="out" style="font-weight:600;display:block;margin-bottom:8px">Your pledge, ready to post</label>
+        <textarea id="out" readonly>Choose your actions and press "Build my pledge".</textarea>
+        <div class="btns" style="margin-top:12px"><button class="btn btn-line" type="button" id="copy">Copy pledge</button></div>
+        <p class="status" id="status" aria-live="polite"></p>
+        <p class="small muted">This page does not collect or send your pledge. Copy it and post it yourself.</p>
+      </div>
+    </div>
+    <div class="callout">
+      <b>For leaders.</b> Barangay captains and councils can ask the GAD focal person to schedule a first livelihood and financial literacy workshop, and ask the health center how many mothers and children its nutrition program reaches. National and local agencies can start publishing sex-disaggregated food insecurity data.
+    </div>
+  </div>
+</section>
+
+<section class="block" id="team" aria-labelledby="h-team">
+  <div class="wrap">
+    <span class="eyebrow">Youth Advocacy Specialists</span>
+    <h2 id="h-team">Group 5, 12 &ndash; STEM 5</h2>
+    <p class="muted">San Beda University Senior High School. Submitted to Mr. Jefferson I. Barrocamo for Understanding Culture, Society, and Politics.</p>
+    <ul class="team">
+      <li>Vash Jeremy Cruz</li>
+      <li>Juris Adriana Fonseca</li>
+      <li>Ingrid Cardea Gonzalbo</li>
+      <li>Dave Kenneth Lopez</li>
+      <li>Patrick Manuel Odulio</li>
+      <li>Matthew Andrew Sta. Maria</li>
+    </ul>
+  </div>
+</section>
+
+<section class="block" id="refs" aria-labelledby="h-refs">
+  <div class="wrap">
+    <span class="eyebrow">References</span>
+    <h2 id="h-refs">Sources used</h2>
+    <ul class="refs">
+      <li>Alinsunurin, M. K. G. (2018). Gendered relations and time-use: Perspectives from selected households of Philippines' Pantawid Pamilyang Pilipino Program in Calauan and San Pablo City, Laguna. <i>Journal of Public Affairs and Development, 5</i>, 89&ndash;113. <a href="https://ovcre.uplb.edu.ph/journals-uplb/index.php/JPAD/article/download/696/655" target="_blank" rel="noopener">https://ovcre.uplb.edu.ph/journals-uplb/index.php/JPAD/article/download/696/655</a></li>
+      <li>de Brauw, A., Gilligan, D. O., Hoddinott, J., &amp; Roy, S. (2014). The impact of Bolsa Fam&iacute;lia on women's decision-making power. <i>World Development, 59</i>, 487&ndash;504.</li>
+      <li>Food and Agriculture Organization of the United Nations. (2025). <i>Gender and food security</i>. <a href="https://www.fao.org/gender/learning-center/thematic-areas/gender-and-food-security/en" target="_blank" rel="noopener">https://www.fao.org/gender/learning-center/thematic-areas/gender-and-food-security/en</a></li>
+      <li>Gregorio, V. L. (2024). <i>Feeding the gap: Examining the nexus of food insecurity, gender, and poverty in the Philippines</i> (ISEAS Perspective No. 2024/69). ISEAS &ndash; Yusof Ishak Institute. <a href="https://www.iseas.edu.sg/articles-commentaries/iseas-perspective/2024-69-feeding-the-gap-examining-the-nexus-of-food-insecurity-gender-and-poverty-in-the-philippines-by-veronica-l-gregorio" target="_blank" rel="noopener">https://www.iseas.edu.sg/articles-commentaries/iseas-perspective/2024-69-feeding-the-gap-examining-the-nexus-of-food-insecurity-gender-and-poverty-in-the-philippines-by-veronica-l-gregorio</a></li>
+      <li>Harris-Fry, H., Shrestha, N., Costello, A., &amp; Saville, N. M. (2017). Determinants of intrahousehold food allocation between adults in South Asia: A systematic review. <i>International Journal for Equity in Health, 16</i>, 107. <a href="https://doi.org/10.1186/s12939-017-0603-1" target="_blank" rel="noopener">https://doi.org/10.1186/s12939-017-0603-1</a></li>
+      <li>Mane, E., Macchioni Giaquinto, A., Cafiero, C., Viviani, S., Anr&iacute;quez, G., et al. (2025). Closing the gender gap in global food insecurity: Socioeconomic determinants and economic gains in the aftermath of COVID-19. <i>Global Food Security, 45</i>, 100850. <a href="https://doi.org/10.1016/j.gfs.2025.100850" target="_blank" rel="noopener">https://doi.org/10.1016/j.gfs.2025.100850</a></li>
+      <li>Orbeta, A. C., Jr., Melad, K. A. M., &amp; Araos, N. V. V. (2021). <i>Reassessing the impact of the Pantawid Pamilyang Pilipino Program: Results of the third wave impact evaluation</i> (PIDS Discussion Paper No. 2021-05). Philippine Institute for Development Studies. <a href="https://pidswebs.pids.gov.ph/CDN/PUBLICATIONS/pidsdps2105.pdf" target="_blank" rel="noopener">https://pidswebs.pids.gov.ph/CDN/PUBLICATIONS/pidsdps2105.pdf</a></li>
+      <li>Philippine Commission on Women. (n.d.). <i>Republic Act No. 9710: The Magna Carta of Women</i>. <a href="https://pcw.gov.ph/magna-carta-of-women/" target="_blank" rel="noopener">https://pcw.gov.ph/magna-carta-of-women/</a></li>
+      <li>Philippine Statistics Authority. (2023). <i>2022 National Demographic and Health Survey: Women empowerment&mdash;Employment and asset ownership</i>. <a href="https://rssocar.psa.gov.ph/ndhs/node/57561" target="_blank" rel="noopener">https://rssocar.psa.gov.ph/ndhs/node/57561</a></li>
+      <li>United Nations. (n.d.-a). <i>Goal 2: Zero hunger</i>. <a href="https://sdgs.un.org/goals/goal2" target="_blank" rel="noopener">https://sdgs.un.org/goals/goal2</a></li>
+      <li>United Nations. (n.d.-b). <i>Goal 5: Gender equality</i>. <a href="https://sdgs.un.org/goals/goal5" target="_blank" rel="noopener">https://sdgs.un.org/goals/goal5</a></li>
+    </ul>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">#KitaSaBulsaKainSaTyan &middot; San Beda University Senior High School &middot; 12 &ndash; STEM 5, Group 5</div>
+</footer>
+
+<script>
+(function(){
+  /* Fair Plate, Fair Pay checklist, remembered per viewer when storage is available */
+  var boxes=[].slice.call(document.querySelectorAll('#checklist input'));
+  var score=document.getElementById('score');
+  var KEY='fpfp-checks';
+  function update(){
+    var n=boxes.filter(function(b){return b.checked}).length;
+    score.textContent=n+' of '+boxes.length+' in place';
+    try{localStorage.setItem(KEY,JSON.stringify(boxes.map(function(b){return b.checked})))}catch(e){}
+  }
+  try{
+    var saved=JSON.parse(localStorage.getItem(KEY)||'null');
+    if(saved&&saved.length===boxes.length){boxes.forEach(function(b,i){b.checked=!!saved[i]})}
+  }catch(e){}
+  boxes.forEach(function(b){b.addEventListener('change',update)});
+  update();
+
+  /* Pledge builder: builds text on the page only. Nothing is sent anywhere. */
+  var form=document.getElementById('pledge-form');
+  var out=document.getElementById('out');
+  var status=document.getElementById('status');
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    var role=document.getElementById('role').value;
+    var acts=[].slice.call(form.querySelectorAll('input[name="act"]:checked')).map(function(i){return i.value});
+    if(!acts.length){out.value='Tick at least one action to build your pledge.';return}
+    var list=acts.length===1?acts[0]:acts.slice(0,-1).join(', ')+' and '+acts[acts.length-1];
+    out.value='I am a '+role+' and I believe nobody should skip a meal because of who they are. This week I will '+list+
+      '. Kita sa bulsa, kain sa tyan: everyone deserves enough food and a fair say in household money. #KitaSaBulsaKainSaTyan #ZeroHunger #GenderEquality';
+    status.textContent='';
+  });
+  document.getElementById('copy').addEventListener('click',function(){
+    function fallback(){out.focus();out.select();status.textContent='Text selected. Press copy on your device.'}
+    try{
+      navigator.clipboard.writeText(out.value).then(function(){status.textContent='Copied.'},fallback);
+    }catch(e){fallback()}
+  });
+
+  /* ---------- motion layer ---------- */
+  var reduce=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+  var NS='http://www.w3.org/2000/svg';
+
+  /* dinner table: coins flow from the pouch, plates toggle between today and fair */
+  var scene=document.getElementById('scene');
+  if(scene){
+    var coinsG=document.getElementById('coins');
+    if(reduce){coinsG.parentNode.removeChild(coinsG)}
+    else{
+      [[210,92],[328,210],[210,328],[92,210]].forEach(function(t,fi){
+        for(var k=0;k<3;k++){
+          var begin=(k*0.87+fi*0.22).toFixed(2)+'s';
+          var c=document.createElementNS(NS,'circle');
+          c.setAttribute('r','6');c.setAttribute('class','coin');c.setAttribute('opacity','0');
+          var m=document.createElementNS(NS,'animateMotion');
+          m.setAttribute('dur','2.6s');m.setAttribute('repeatCount','indefinite');m.setAttribute('begin',begin);
+          m.setAttribute('path','M210 210 L'+t[0]+' '+t[1]);
+          var a=document.createElementNS(NS,'animate');
+          a.setAttribute('attributeName','opacity');a.setAttribute('values','0;1;1;0');a.setAttribute('keyTimes','0;0.15;0.8;1');
+          a.setAttribute('dur','2.6s');a.setAttribute('repeatCount','indefinite');a.setAttribute('begin',begin);
+          c.appendChild(m);c.appendChild(a);coinsG.appendChild(c);
+        }
+      });
+    }
+    var cap=document.getElementById('scene-cap');
+    var caps={
+      today:'Money comes in, but the mother may eat less so everyone else can eat. Women often put other household members first during shortages (FAO, 2025; Gregorio, 2024).',
+      fair:'Fair plate, fair pay: every member’s nutrition counts, and the household decides on money together.'
+    };
+    var tbtns=[].slice.call(document.querySelectorAll('.toggle button'));
+    var state='today',auto=null;
+    function setState(s,byUser){
+      state=s;scene.setAttribute('data-state',s);cap.textContent=caps[s];
+      tbtns.forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-state')===s?'true':'false')});
+      if(byUser&&auto){clearInterval(auto);auto=null}
+    }
+    tbtns.forEach(function(b){b.addEventListener('click',function(){setState(b.getAttribute('data-state'),true)})});
+    if(!reduce){auto=setInterval(function(){setState(state==='today'?'fair':'today',false)},5600)}
+  }
+  if(reduce){[].slice.call(document.querySelectorAll('svg')).forEach(function(s){if(s.pauseAnimations)s.pauseAnimations()})}
+
+  /* scroll progress */
+  var prog=document.getElementById('progress');
+  var ticking=false;
+  function onScroll(){
+    if(ticking)return;ticking=true;
+    requestAnimationFrame(function(){
+      var d=document.documentElement;var max=d.scrollHeight-window.innerHeight;
+      prog.style.transform='scaleX('+(max>0?Math.min(1,window.scrollY/max):0)+')';
+      ticking=false;
+    });
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+  /* count-up numbers */
+  function fmt(n,dec){return n.toLocaleString('en-US',{minimumFractionDigits:dec,maximumFractionDigits:dec})}
+  function countUp(el,to,dec,suf){
+    var t0=null,dur=1600;
+    function step(ts){
+      if(t0===null)t0=ts;
+      var p=Math.min((ts-t0)/dur,1),e=1-Math.pow(1-p,3);
+      el.textContent=fmt(to*e,dec)+suf;
+      if(p<1)requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  if(!reduce){
+    [].slice.call(document.querySelectorAll('.key .num')).forEach(function(el){
+      var txt=el.textContent,to=parseFloat(txt),dec=((txt.split('.')[1]||'').replace(/\D/g,'')).length,suf=txt.replace(/[0-9.,]/g,'');
+      el.textContent=fmt(0,dec)+suf;
+      setTimeout(function(){countUp(el,to,dec,suf)},600);
+    });
+    if('IntersectionObserver' in window){
+      var cio=new IntersectionObserver(function(es){
+        es.forEach(function(e){
+          if(e.isIntersecting){
+            var el=e.target;cio.unobserve(el);
+            countUp(el,parseFloat(el.getAttribute('data-to')),0,'');
+          }
+        });
+      },{threshold:0.4});
+      [].slice.call(document.querySelectorAll('.count')).forEach(function(el){cio.observe(el)});
+    }
+  }
+
+  /* reveal on scroll: content is always visible, the entrance only adds a short slide */
+  if(!reduce&&'IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
+    },{threshold:0.01});
+    [].slice.call(document.querySelectorAll('.card,.acts li,.phase,.stat,.flow>div,.level .where,.tablewrap,.team li,.callout,.ledger,.marquee,.rings')).forEach(function(el,i){
+      el.classList.add('reveal');el.style.animationDelay=((i%3)*90)+'ms';io.observe(el);
+    });
+  }
+
+  /* pledge burst */
+  function burst(x,y){
+    if(reduce)return;
+    var cs=getComputedStyle(document.documentElement);
+    var cols=['--coin','--maroon','--leaf','--rice'].map(function(n){return cs.getPropertyValue(n).trim()});
+    var cv=document.createElement('canvas'),dpr=window.devicePixelRatio||1;
+    cv.width=window.innerWidth*dpr;cv.height=window.innerHeight*dpr;
+    cv.style.cssText='position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50';
+    document.body.appendChild(cv);
+    var g=cv.getContext('2d');g.scale(dpr,dpr);
+    var ps=[];
+    for(var i=0;i<90;i++){
+      var ang=Math.random()*Math.PI*2,sp=4+Math.random()*9;
+      ps.push({x:x,y:y,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp-6,r:3+Math.random()*4,rot:Math.random()*6,vr:(Math.random()-.5)*.4,c:cols[i%cols.length],coin:i%3===0});
+    }
+    var f=0;
+    (function tick(){
+      g.clearRect(0,0,window.innerWidth,window.innerHeight);
+      ps.forEach(function(p){
+        p.vy+=.35;p.vx*=.985;p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;
+        g.save();g.translate(p.x,p.y);g.rotate(p.rot);g.fillStyle=p.c;g.globalAlpha=Math.max(0,1-f/110);
+        if(p.coin){g.beginPath();g.arc(0,0,p.r,0,6.3);g.fill()}else{g.fillRect(-p.r,-p.r/2,p.r*2,p.r)}
+        g.restore();
+      });
+      f++;
+      if(f<120)requestAnimationFrame(tick);else if(cv.parentNode)cv.parentNode.removeChild(cv);
+    })();
+  }
+  form.addEventListener('submit',function(){
+    var b=form.querySelector('button[type="submit"]'),r=b.getBoundingClientRect();
+    burst(r.left+r.width/2,r.top+r.height/2);
+  });
+})();
+</script>
